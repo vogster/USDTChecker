@@ -1,6 +1,8 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '2.0.10'
     id 'application'
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 repositories {
@@ -27,6 +29,14 @@ application {
     mainClassName = 'com.dizonavr.MainKt'
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.dizonavr.MainKt'
+        )
+    }
+}
+
 sourceSets {
     main {
         resources {
@@ -40,4 +50,8 @@ test {
 }
 kotlin {
     jvmToolchain(17)
+}
+
+shadowJar {
+    mergeServiceFiles()
 }

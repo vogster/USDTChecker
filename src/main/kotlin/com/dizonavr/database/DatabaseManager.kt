@@ -5,6 +5,7 @@ import java.sql.DriverManager
 
 class DatabaseManager {
     init {
+        Class.forName("org.sqlite.JDBC")
         initializeDatabase()
     }
 
@@ -17,24 +18,6 @@ class DatabaseManager {
                 )
                 """.trimIndent()
             )
-        }
-    }
-
-    fun countMatches(addresses: List<String>): Int {
-        return DriverManager.getConnection("jdbc:sqlite:${Config.DB_NAME}").use { connection ->
-            addresses.chunked(Config.MAX_SQL_PARAMS).sumOf { chunk ->
-                val placeholders = chunk.joinToString(",") { "?" }
-                val query = "SELECT COUNT(*) FROM addresses WHERE address IN ($placeholders)"
-
-                connection.prepareStatement(query).use { statement ->
-                    chunk.forEachIndexed { index, address ->
-                        statement.setString(index + 1, address)
-                    }
-                    statement.executeQuery().use { resultSet ->
-                        if (resultSet.next()) resultSet.getInt(1) else 0
-                    }
-                }
-            }
         }
     }
 
